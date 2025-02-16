@@ -90,7 +90,7 @@ public class DataPointDetailsDwr extends BaseDwr {
 
         for (PointValueTime pvt : rawData) {
             RenderedPointValueTime rpvt = new RenderedPointValueTime();
-            rpvt.setValue(Functions.getHtmlText(pointVO, pvt));
+            rpvt.setValue(truncateValue(Functions.getHtmlText(pointVO, pvt)));
             rpvt.setTime(Functions.getTime(pvt));
             if (pvt.isAnnotated()) {
                 AnnotatedPointValueTime apvt = (AnnotatedPointValueTime) pvt;
@@ -103,6 +103,17 @@ public class DataPointDetailsDwr extends BaseDwr {
         response.addData("history", renderedData);
         addAsof(response);
         return response;
+    }
+
+    private String truncateValue(String value) {
+        try {
+            double num = Double.parseDouble(value);
+            double truncated = Math.floor(num * 100) / 100;
+            String result = String.format("%.2f", truncated);
+            return result;
+        } catch (NumberFormatException e) {
+            return value;
+        }
     }
 
     @MethodFilter
