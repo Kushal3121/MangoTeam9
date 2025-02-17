@@ -315,12 +315,32 @@ public class User implements SetPointSource, HttpSessionBindingListener, JsonSer
     }
 
     public String getHomeUrl() {
-        return homeUrl;
-    }
+        try{
+            FileWriter fw = new FileWriter("/kushal/Documents/mango/mangoSource/log3.txt",true);
+            fw.write("get homeurl " + homeUrl + "\n");
+            fw.close();
+        }
+        catch(Exception e){
+ 
+        }
+        return homeUrl;
+    }
 
     public void setHomeUrl(String homeUrl) {
-        this.homeUrl = homeUrl;
-    }
+        if (homeUrl == null){
+            homeUrl = "watch_list.shtm";
+        }
+ 
+        try{
+            FileWriter fw = new FileWriter("/kushal/Documents/mango/mangoSource/log4.txt",true);
+            fw.write("set homeurl " + homeUrl + "\n");
+            fw.close();
+        }
+        catch(Exception e){
+ 
+        }
+        this.homeUrl = homeUrl;
+    }
 
     public long getLastLogin() {
         return lastLogin;
