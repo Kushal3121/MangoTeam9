@@ -91,7 +91,7 @@ public class User implements SetPointSource, HttpSessionBindingListener, JsonSer
     private transient Map<String, byte[]> reportImageData;
     private transient PublisherVO<? extends PublishedPointVO> editPublisher;
     private transient ImportTask importTask;
-    private transient boolean muted = false;
+    private transient boolean muted = true;
     private transient DataExportDefinition dataExportDefinition;
     private transient Map<String, Object> attributes = new HashMap<String, Object>();
 
