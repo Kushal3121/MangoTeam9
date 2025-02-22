@@ -217,9 +217,9 @@
 <!-- Tomcat tasks                                                   -->
 <!-- ============================================================== -->
 	
-	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
+	<!-- <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
 		<classpath><path location="${tomcat.home}/lib/catalina-ant.jar"/></classpath>
-	</taskdef>
+	</taskdef> -->
 	<taskdef name="list" classname="org.apache.catalina.ant.ListTask">
 		<classpath><path location="${tomcat.home}/lib/catalina-ant.jar"/></classpath>
 	</taskdef>
@@ -230,10 +230,10 @@
 		<classpath><path location="${tomcat.home}/lib/catalina-ant.jar"/></classpath>
 	</taskdef>
 	
-	<target name="reload" description="Reload application in Tomcat">
+	<!-- <target name="reload" description="Reload application in Tomcat">
 		<reload url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"
 				path="${tomcat.apppath}"/>
-	</target>
+	</target> -->
 	
 	<target name="start" description="Start Tomcat application">
 		<start url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"
@@ -314,7 +314,7 @@
     </target>
 
     <target name="test" depends="test.console.launcher" description="Quickly test currently deployed code. Meant for writing test cases."/>
-    <target name="fullTest" depends="clean,fullDeploy,reload,test.console.launcher" description="cleans build directory, and reloads Tomcat. Run this if encountering strange errors."/>
+    <!-- <target name="fullTest" depends="clean,fullDeploy,reload,test.console.launcher" description="cleans build directory, and reloads Tomcat. Run this if encountering strange errors."/> -->
 
 
 </project>
