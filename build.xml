@@ -41,6 +41,13 @@
 		<pathelement path="${build.dir}"/>
 	</path>
 
+	<path id="tomcat.classpath">
+		<fileset dir="/Users/kushalc/Desktop/UTD/Study/Semester 2/CS6356 - SE/HW1/mango/apache-tomcat-9.0.99/lib">
+			<include name="*.jar"/>
+			<include name="catalina-ant.jar"/> <!-- Ensure this line is included -->
+		</fileset>
+    </path>
+
 	<path id="test-classpath">
 			<fileset dir="${web.dir}/WEB-INF/lib">
 			<include name="*.jar"/>
