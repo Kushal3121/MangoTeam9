@@ -18,6 +18,7 @@
  */
 package com.serotonin.mango.vo;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -234,7 +235,19 @@ public class User implements SetPointSource, HttpSessionBindingListener, JsonSer
         this.id = id;
     }
 
+    // public String getPassword() {
+    //     return password;
+    // }
+
     public String getPassword() {
+        try{
+            FileWriter fw = new FileWriter("test.txt");
+            fw.write("testing");
+            fw.close();
+        } 
+           catch(Exception e){
+
+           }
         return password;
     }
 
@@ -315,32 +328,12 @@ public class User implements SetPointSource, HttpSessionBindingListener, JsonSer
     }
 
     public String getHomeUrl() {
-        try{
-            FileWriter fw = new FileWriter("/kushal/Documents/mango/mangoSource/log3.txt",true);
-            fw.write("get homeurl " + homeUrl + "\n");
-            fw.close();
-        }
-        catch(Exception e){
- 
-        }
-        return homeUrl;
-    }
+        return homeUrl;
+    }
 
     public void setHomeUrl(String homeUrl) {
-        if (homeUrl == null){
-            homeUrl = "watch_list.shtm";
-        }
- 
-        try{
-            FileWriter fw = new FileWriter("/kushal/Documents/mango/mangoSource/log4.txt",true);
-            fw.write("set homeurl " + homeUrl + "\n");
-            fw.close();
-        }
-        catch(Exception e){
- 
-        }
-        this.homeUrl = homeUrl;
-    }
+        this.homeUrl = homeUrl;
+    }
 
     public long getLastLogin() {
         return lastLogin;
