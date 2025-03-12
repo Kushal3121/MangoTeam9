@@ -97,33 +97,25 @@ abstract public class DBUpgrade extends BaseDao {
     abstract protected String getNewSchemaVersion();
 
     /**
-     * Refactored method for running scripts. Consolidates both the previous methods to handle both cases.
+     * Convenience method for subclasses
      * 
-     * @param scriptOrScripts
-     *            the script(s) to run, either an array or a map of scripts
+     * @param script
+     *            the array of script lines to run
      * @param out
      *            the stream to which to direct output from running the script
      * @throws Exception
      *             if something bad happens
      */
-    protected void runScript(Object scriptOrScripts, OutputStream out) throws Exception {
-        String[] script = null;
+    protected void runScript(String[] script, OutputStream out) throws Exception {
+        Common.ctx.getDatabaseAccess().runScript(script, out);
+    }
+
+    protected void runScript(Map<String, String[]> scripts, final OutputStream out) throws Exception {
         DatabaseAccess da = Common.ctx.getDatabaseAccess();
-
-        if (scriptOrScripts instanceof Map) {
-            // If scriptOrScripts is a Map, get the script based on database type
-            Map<String, String[]> scripts = (Map<String, String[]>) scriptOrScripts;
-            script = scripts.get(da.getType().name());
-            if (script == null)
-                script = scripts.get(DEFAULT_DATABASE_TYPE);
-        } else if (scriptOrScripts instanceof String[]) {
-            // If scriptOrScripts is a String[], use it directly
-            script = (String[]) scriptOrScripts;
-        }
-
-        if (script != null) {
-            da.runScript(script, out);
-        }
+        String[] script = scripts.get(da.getType().name());
+        if (script == null)
+            script = scripts.get(DEFAULT_DATABASE_TYPE);
+        runScript(script, out);
     }
 
     protected OutputStream createUpdateLogOutputStream(String version) {
