@@ -153,50 +153,67 @@ public class DataSourceDao extends BaseDao {
         });
     }
 
+    // Refactored method with extracted smaller methods for better readability and maintainability
     public int copyDataSource(final int dataSourceId, final ResourceBundle bundle) {
         return getTransactionTemplate().execute(new GenericTransactionCallback<Integer>() {
             @Override
             public Integer doInTransaction(TransactionStatus status) {
-                DataPointDao dataPointDao = new DataPointDao();
-
                 DataSourceVO<?> dataSource = getDataSource(dataSourceId);
 
-                // Copy the data source.
-                DataSourceVO<?> dataSourceCopy = dataSource.copy();
-                dataSourceCopy.setId(Common.NEW_ID);
-                dataSourceCopy.setXid(generateUniqueXid());
-                dataSourceCopy.setEnabled(false);
-                dataSourceCopy.setName(StringUtils.truncate(
-                        LocalizableMessage.getMessage(bundle, "common.copyPrefix", dataSource.getName()), 40));
-                saveDataSource(dataSourceCopy);
+                // Copy the data source
+                DataSourceVO<?> dataSourceCopy = copyDataSourceVO(dataSource, bundle);
 
-                // Copy permissions.
-                copyPermissions(dataSource.getId(), dataSourceCopy.getId());
-
-                // Copy the points.
-                for (DataPointVO dataPoint : dataPointDao.getDataPoints(dataSourceId, null)) {
-                    DataPointVO dataPointCopy = dataPoint.copy();
-                    dataPointCopy.setId(Common.NEW_ID);
-                    dataPointCopy.setXid(dataPointDao.generateUniqueXid());
-                    dataPointCopy.setName(dataPoint.getName());
-                    dataPointCopy.setDataSourceId(dataSourceCopy.getId());
-                    dataPointCopy.setEnabled(dataPoint.isEnabled());
-                    dataPointCopy.getComments().clear();
-
-                    // Copy the event detectors
-                    for (PointEventDetectorVO ped : dataPointCopy.getEventDetectors()) {
-                        ped.setId(Common.NEW_ID);
-                        ped.njbSetDataPoint(dataPointCopy);
-                    }
-
-                    dataPointDao.saveDataPoint(dataPointCopy);
-
-                    // Copy permissions
-                    dataPointDao.copyPermissions(dataPoint.getId(), dataPointCopy.getId());
-                }
+                // Copy permissions and points
+                copyPermissionsAndDataPoints(dataSource, dataSourceCopy);
 
                 return dataSourceCopy.getId();
             }
         });
+    }
+
+    // New extracted method to handle data source copy
+    private DataSourceVO<?> copyDataSourceVO(DataSourceVO<?> dataSource, ResourceBundle bundle) {
+        DataSourceVO<?> dataSourceCopy = dataSource.copy();
+        dataSourceCopy.setId(Common.NEW_ID);
+        dataSourceCopy.setXid(generateUniqueXid());
+        dataSourceCopy.setEnabled(false);
+        dataSourceCopy.setName(StringUtils.truncate(
+                LocalizableMessage.getMessage(bundle, "common.copyPrefix", dataSource.getName()), 40));
+        saveDataSource(dataSourceCopy);
+        return dataSourceCopy;
+    }
+
+    // New extracted method to handle copying permissions and data points
+    private void copyPermissionsAndDataPoints(DataSourceVO<?> dataSource, DataSourceVO<?> dataSourceCopy) {
+        // Copy permissions
+        copyPermissions(dataSource.getId(), dataSourceCopy.getId());
+
+        // Copy the points
+        DataPointDao dataPointDao = new DataPointDao();
+        for (DataPointVO dataPoint : dataPointDao.getDataPoints(dataSource.getId(), null)) {
+            copyDataPoint(dataPoint, dataSourceCopy, dataPointDao);
+        }
+    }
+
+    // New extracted method to handle individual data point copying
+    private void copyDataPoint(DataPointVO dataPoint, DataSourceVO<?> dataSourceCopy, DataPointDao dataPointDao) {
+        DataPointVO dataPointCopy = dataPoint.copy();
+        dataPointCopy.setId(Common.NEW_ID);
+        dataPointCopy.setXid(dataPointDao.generateUniqueXid());
+        dataPointCopy.setName(dataPoint.getName());
+        dataPointCopy.setDataSourceId(dataSourceCopy.getId());
+        dataPointCopy.setEnabled(dataPoint.isEnabled());
+        dataPointCopy.getComments().clear();
+
+        // Copy the event detectors
+        for (PointEventDetectorVO ped : dataPointCopy.getEventDetectors()) {
+            ped.setId(Common.NEW_ID);
+            ped.njbSetDataPoint(dataPointCopy);
+        }
+
+        dataPointDao.saveDataPoint(dataPointCopy);
+
+        // Copy permissions for data point
+        dataPointDao.copyPermissions(dataPoint.getId(), dataPointCopy.getId());
     }
 }
